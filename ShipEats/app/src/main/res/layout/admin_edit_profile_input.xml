@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_edit_mode"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:visibility="gone">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -31,6 +33,7 @@
                 android:textStyle="bold"
                 android:textSize="14sp"/>
             <EditText
+                android:id="@+id/et_name"
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
                 android:text="Admin"
@@ -68,6 +71,7 @@
                 android:textStyle="bold"
                 android:textSize="14sp"/>
             <EditText
+                android:id="@+id/et_email"
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
                 android:text="admin@peninsulamalaysia.edu.my"
@@ -105,6 +109,7 @@
                 android:textStyle="bold"
                 android:textSize="14sp"/>
             <EditText
+                android:id="@+id/et_phone"
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
                 android:text="+60 123456789"
@@ -142,6 +147,7 @@
                 android:textStyle="bold"
                 android:textSize="14sp"/>
             <EditText
+                android:id="@+id/et_location"
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
                 android:text="The Ship Campus Deck 4"

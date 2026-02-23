@@ -16,7 +16,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Set Ordering Hours"
+            android:text="Change Ordering Hours"
             android:textColor="#04397B"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -37,16 +37,16 @@
             android:textColor="#04397B"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tv_start_time"
+        <EditText
+            android:id="@+id/et_start_time"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/bg_input_field"
-            android:gravity="center_vertical"
-            android:paddingHorizontal="16dp"
-            android:text="14:30"
-            android:textColor="#101828" />
+            android:layout_height="45dp"
+            android:layout_marginTop="12dp"
+            android:hint="Start Time"
+            android:focusable="false"
+            android:clickable="true"
+            android:padding="12dp"
+            android:background="@drawable/bg_input_field"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -56,16 +56,17 @@
             android:textColor="#04397B"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tv_end_time"
+        <EditText
+            android:id="@+id/et_end_time"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/bg_input_field"
-            android:gravity="center_vertical"
-            android:paddingHorizontal="16dp"
-            android:text="16:30"
-            android:textColor="#101828" />
+            android:layout_height="45dp"
+            android:layout_marginTop="12dp"
+            android:hint="End Time"
+            android:focusable="false"
+            android:clickable="true"
+            android:padding="12dp"
+            android:background="@drawable/bg_input_field"/>
+
 
         <LinearLayout
             android:layout_width="match_parent"
