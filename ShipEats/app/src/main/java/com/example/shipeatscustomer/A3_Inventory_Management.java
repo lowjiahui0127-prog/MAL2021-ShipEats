@@ -1,24 +1,28 @@
 package com.example.shipeatscustomer;
 
+import static java.util.Locale.filter;
+
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.net.Uri;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -33,10 +37,21 @@ public class A3_Inventory_Management extends AppCompatActivity {
 
     RecyclerView recyclerView;
     MaterialButton addItemBtn;
-
+    EditText etSearch;
     DatabaseReference databaseRef;
     List<FoodItem> foodList;
     A3_InventoryAdapter adapter;
+
+    // Launcher for image selection from gallery
+    private final ActivityResultLauncher<Intent> imagePickerLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                    Uri selectedImageUri = result.getData().getData();
+                    AdminDialogHelper.handleImageResult(selectedImageUri);
+                }
+            }
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +61,8 @@ public class A3_Inventory_Management extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.inventory_recycler);
         addItemBtn = findViewById(R.id.btn_add_item);
-
+        etSearch = findViewById(R.id.et_search);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
         foodList = new ArrayList<>();
 
         databaseRef = FirebaseDatabase.getInstance().getReference("food_items");
@@ -56,12 +70,12 @@ public class A3_Inventory_Management extends AppCompatActivity {
         adapter = new A3_InventoryAdapter(this, foodList, new A3_InventoryAdapter.OnItemActionListener() {
             @Override
             public void onDelete(FoodItem item) {
-                showDeleteDialog(item);
+                AdminDialogHelper.showDeleteConfirmDialog(A3_Inventory_Management.this, item.getId());
             }
 
             @Override
             public void onEdit(FoodItem item) {
-                showItemDialog(item);
+                AdminDialogHelper.showEditMenuDialog(A3_Inventory_Management.this, imagePickerLauncher, item, false);
             }
         });
 
@@ -79,6 +93,14 @@ public class A3_Inventory_Management extends AppCompatActivity {
                     }
                 }
                 adapter.notifyDataSetChanged();
+
+                // If user is currently searching, maintain the filter even when data updates
+                String currentSearch = etSearch.getText().toString();
+                if (currentSearch.isEmpty()) {
+                    adapter.updateList(foodList);
+                } else {
+                    filter(currentSearch);
+                }
             }
 
             @Override
@@ -88,166 +110,73 @@ public class A3_Inventory_Management extends AppCompatActivity {
             }
         });
 
-        addItemBtn.setOnClickListener(v -> showItemDialog(null));
+        // Search Bar Listener
+        etSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filter(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+
+        addItemBtn.setOnClickListener(v -> AdminDialogHelper.showEditMenuDialog(this, imagePickerLauncher, null, true));
 
         setupBottomNav();
+
+        // Highlight the Menu tab
+        ImageView menuIcon = findViewById(R.id.inventory_icon);
+        TextView menuText = findViewById(R.id.inventory_text);
+        highlightCurrentTab(menuIcon, menuText);
+    }
+
+    // Search Filtering Logic
+    private void filter(String text) {
+        List<FoodItem> filteredList = new ArrayList<>();
+
+        for (FoodItem item : foodList) {
+            // Checks if name contains search text (case insensitive)
+            if (item.getName().toLowerCase().contains(text.toLowerCase())) {
+                filteredList.add(item);
+            }
+        }
+
+        // Pass the filtered list to the adapter
+        adapter.updateList(filteredList);
+    }
+
+    private void highlightCurrentTab(ImageView icon, TextView text) {
+        if (icon != null && text != null) {
+            int activeColor = Color.parseColor("#FFD700");
+            icon.setColorFilter(activeColor);
+            text.setTextColor(activeColor);
+            text.setTypeface(null, android.graphics.Typeface.BOLD);
+        }
     }
 
     private void setupBottomNav() {
-        findViewById(R.id.dashboard_nav).setOnClickListener(v ->
-                startActivity(new Intent(this, A2_Dashboard.class)));
+        View footer = findViewById(R.id.footer_section);
+        if (footer != null) {
+            footer.findViewById(R.id.dashboard_nav).setOnClickListener(v ->
+                    startActivity(new Intent(this, A2_Dashboard.class)));
 
-        findViewById(R.id.profile_nav).setOnClickListener(v ->
-                startActivity(new Intent(this, A6_Profile.class)));
-    }
+            footer.findViewById(R.id.inventory_nav).setOnClickListener(v ->
+                    Toast.makeText(this, "You are already on Inventory", Toast.LENGTH_SHORT).show());
 
-    // ===================== ADD & EDIT DIALOG =====================
-    private void showItemDialog(FoodItem item) {
+            footer.findViewById(R.id.orders_nav).setOnClickListener(v ->
+                    startActivity(new Intent(this, A4_CustomerOrderActivity.class)));
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View view = getLayoutInflater().inflate(R.layout.admin_dialog_add_item, null);
-        builder.setView(view);
+            footer.findViewById(R.id.menu_nav).setOnClickListener(v ->
+                    startActivity(new Intent(this, A5_MenuManagementActivity.class)));
 
-        AlertDialog dialog = builder.create();
-        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        dialog.show();
-
-        TextView title = view.findViewById(R.id.dialog_title);
-        MaterialButton btnConfirm = view.findViewById(R.id.btn_add_confirm);
-
-        EditText etName = view.findViewById(R.id.et_name);
-        EditText etDesc = view.findViewById(R.id.et_description);
-        EditText etPrice = view.findViewById(R.id.et_price);
-        Spinner spinnerQuantity = view.findViewById(R.id.spinner_quantity);
-        Spinner spinnerCategory = view.findViewById(R.id.spinner_category);
-
-        // Close button
-        view.findViewById(R.id.btn_close).setOnClickListener(v -> dialog.dismiss());
-
-        // Quantity Spinner 0–50
-        List<Integer> quantityList = new ArrayList<>();
-        for (int i = 0; i <= 50; i++) {
-            quantityList.add(i);
-        }
-
-        ArrayAdapter<Integer> quantityAdapter = new ArrayAdapter<>(
-                this, android.R.layout.simple_spinner_dropdown_item, quantityList);
-        spinnerQuantity.setAdapter(quantityAdapter);
-
-        // Category Spinner
-        String[] categories = {"Main Dish", "Beverage", "Snack", "Dessert"};
-        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(
-                this, android.R.layout.simple_spinner_dropdown_item, categories);
-        spinnerCategory.setAdapter(categoryAdapter);
-
-        // ================= EDIT MODE =================
-        if (item != null) {
-
-            title.setText("Edit Food Item");
-            btnConfirm.setText("Update Item");
-
-            etName.setText(item.getName());
-            etDesc.setText(item.getDescription());
-            etPrice.setText(String.valueOf(item.getPrice()));
-
-            spinnerQuantity.setSelection(item.getQuantity());
-
-            int categoryPosition = categoryAdapter.getPosition(item.getCategory());
-            spinnerCategory.setSelection(categoryPosition);
-
-            btnConfirm.setOnClickListener(v -> {
-
-                String name = etName.getText().toString().trim();
-                String description = etDesc.getText().toString().trim();
-                double price = Double.parseDouble(etPrice.getText().toString());
-                int quantity = (int) spinnerQuantity.getSelectedItem();
-                String category = spinnerCategory.getSelectedItem().toString();
-
-                FoodItem updatedItem = new FoodItem(
-                        item.getId(),
-                        name,
-                        description,
-                        category,
-                        price,
-                        quantity,
-                        item.getImageUrl()
-                );
-
-                databaseRef.child(item.getId()).setValue(updatedItem);
-
-                dialog.dismiss();
-                showSuccessDialog("Item updated successfully");
-            });
-
-        }
-        // ================= ADD MODE =================
-        else {
-
-            title.setText("Add New Food Item");
-            btnConfirm.setText("Add Item");
-
-            btnConfirm.setOnClickListener(v -> {
-
-                String name = etName.getText().toString().trim();
-                String description = etDesc.getText().toString().trim();
-                String priceText = etPrice.getText().toString().trim();
-
-                if (name.isEmpty() || priceText.isEmpty()) {
-                    Toast.makeText(this,
-                            "Please fill all required fields",
-                            Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                double price = Double.parseDouble(priceText);
-                int quantity = (int) spinnerQuantity.getSelectedItem();
-                String category = spinnerCategory.getSelectedItem().toString();
-
-                String id = databaseRef.push().getKey();
-
-                FoodItem newItem = new FoodItem(
-                        id,
-                        name,
-                        description,
-                        category,
-                        price,
-                        quantity,
-                        ""
-                );
-
-                databaseRef.child(id).setValue(newItem);
-
-                dialog.dismiss();
-                showSuccessDialog("Item added successfully");
-            });
+            footer.findViewById(R.id.profile_nav).setOnClickListener(v ->
+                    startActivity(new Intent(this, A6_Profile.class)));
         }
     }
 
-    // ================= DELETE =================
-    private void showDeleteDialog(FoodItem item) {
 
-        new AlertDialog.Builder(this)
-                .setTitle("Delete Item")
-                .setMessage("Are you sure you want to delete this item?")
-                .setPositiveButton("Delete", (dialog, which) ->
-                        databaseRef.child(item.getId()).removeValue())
-                .setNegativeButton("Cancel", null)
-                .show();
-    }
-
-    // ================= SUCCESS POPUP =================
-    private void showSuccessDialog(String message) {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View view = getLayoutInflater().inflate(R.layout.admin_dialog_success, null);
-        builder.setView(view);
-
-        AlertDialog dialog = builder.create();
-        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        dialog.show();
-
-        ((TextView) view.findViewById(R.id.tv_success_message)).setText(message);
-
-        view.postDelayed(dialog::dismiss, 1500);
-    }
 }

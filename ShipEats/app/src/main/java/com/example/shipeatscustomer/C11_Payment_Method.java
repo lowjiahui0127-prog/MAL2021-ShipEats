@@ -1,67 +1,167 @@
 package com.example.shipeatscustomer;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.card.MaterialCardView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 public class C11_Payment_Method extends AppCompatActivity {
 
     private MaterialCardView btnCard, btnFPX;
     private TextView tvPaymentInfo;
+    private ImageView ivBack;
+    private Button btnPlaceOrder;
+    private DatabaseReference ordersRef;
+    private String selectedMethod = "Card"; // Default
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_c11_payment_method);
 
+        ordersRef = FirebaseDatabase.getInstance().getReference("Orders");
+
         // 1. Initialize Views
         btnCard = findViewById(R.id.btnCardInfo);
         btnFPX = findViewById(R.id.btnFPXInfo);
         tvPaymentInfo = findViewById(R.id.tvPaymentInfo);
-        ImageView ivBack = findViewById(R.id.ivBack);
+        ivBack = findViewById(R.id.ivBack);
+        btnPlaceOrder = findViewById(R.id.btnPlaceOrder);
 
         // 2. Back Button Logic
         ivBack.setOnClickListener(v -> finish());
 
         // 3. Set Card Click Logic
-        btnCard.setOnClickListener(v -> showCardInfo());
+        btnCard.setOnClickListener(v -> {
+            selectedMethod = "Card";
+            showCardInfo();
+        });
 
         // 4. Set FPX Click Logic
-        btnFPX.setOnClickListener(v -> showFPXInfo());
+        btnFPX.setOnClickListener(v -> {
+            selectedMethod = "FPX";
+            showFPXInfo();
+        });
 
-        // Load default state (e.g., Card selected)
+        // 5. Place Order Logic
+        btnPlaceOrder.setOnClickListener(v -> placeOrder());
+
+        // Load default state
         showCardInfo();
     }
 
-    private void showCardInfo() {
-        // Update UI Colors
-        btnCard.setCardBackgroundColor(Color.parseColor("#B2EBF2")); // Light Teal
-        btnFPX.setCardBackgroundColor(Color.WHITE);
+    private void placeOrder() {
+        List<CartItem> cartItems = CartManager.getInstance().getCartItems();
+        if (cartItems.isEmpty()) {
+            Toast.makeText(this, "Your cart is empty", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        // Update Text Content
-        tvPaymentInfo.setText("1. Secure Transactions\nAll credit and debit card payments are processed through a secure and encrypted payment gateway to protect your personal and financial information.\n\n" +
-                "2. No Card Data Stored\nWe do not store, process, or have access to your full card details. All card information is handled directly by our trusted payment service provider.\n\n" +
-                "3. PCI-DSS Compliant\nOur payment system complies with PCI-DSS (Payment Card Industry Data Security Standards), ensuring industry-level protection for all card transactions.\n\n" +
-                "4. Authentication & Fraud Prevention\nAdditional security measures such as OTP / 3D Secure (Verified by Visa, Mastercard SecureCode) may be required to prevent unauthorized transactions.\n\n" +
-                "5. Privacy Protection\nYour payment information is used solely for transaction purposes and is protected in accordance with applicable data protection and privacy laws.\n\n" +
-                "6. Trusted Payment Partners\nWe work only with reputable and certified payment gateways to ensure safe, reliable, and seamless payments.");
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String userId = user != null ? user.getUid() : "GuestUser";
+        String userName = user != null && user.getEmail() != null ? user.getEmail().split("@")[0] : "Guest Customer";
+        
+        String orderId = ordersRef.push().getKey();
+        String pickupTime = getIntent().getStringExtra("PICKUP_TIME");
+        if (pickupTime == null) pickupTime = "";
+        
+        StringBuilder itemsSummary = new StringBuilder();
+        double subtotal = 0;
+        int totalQty = 0;
+        
+        for (CartItem item : cartItems) {
+            itemsSummary.append(item.getFoodItem().getName())
+                        .append(" x")
+                        .append(item.getQuantity());
+            
+            if (item.getSpecialInstructions() != null && !item.getSpecialInstructions().isEmpty()) {
+                itemsSummary.append("\n [Note: ").append(item.getSpecialInstructions()).append("]");
+            }
+            if (item.isWantCutlery()) {
+                itemsSummary.append("\n [Want Cutlery: Yes]");
+            }
+            itemsSummary.append("\n\n");
+            
+            subtotal += item.getFoodItem().getPrice() * item.getQuantity();
+            totalQty += item.getQuantity();
+        }
+
+        double total = subtotal + (subtotal * 0.06) + 1.00;
+        String finalPrice = String.format("RM %.2f", total);
+        
+        // Current Date
+        String date = new SimpleDateFormat("d MMM yyyy", Locale.getDefault()).format(new Date());
+
+        AdminOrderModel order = new AdminOrderModel(
+                orderId, 
+                itemsSummary.toString().trim(), 
+                finalPrice, 
+                "Pending", 
+                (long) totalQty, 
+                userName, 
+                userId,
+                date,
+                selectedMethod,
+                pickupTime
+        );
+
+        if (orderId != null) {
+            ordersRef.child(orderId).setValue(order).addOnSuccessListener(aVoid -> {
+                CartManager.getInstance().clearCart();
+                notifyAdminsAndCustomer(order, userId);
+                Intent intent = new Intent(C11_Payment_Method.this, C8_Order_Placed.class);
+                intent.putExtra("ORDER_ID", orderId);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+            }).addOnFailureListener(e -> {
+                Toast.makeText(this, "Failed to place order", Toast.LENGTH_SHORT).show();
+            });
+        }
+    }
+
+    private void showCardInfo() {
+        btnCard.setCardBackgroundColor(Color.parseColor("#B2EBF2")); 
+        btnFPX.setCardBackgroundColor(Color.WHITE);
+        tvPaymentInfo.setText("Secure credit/debit card payment.");
     }
 
     private void showFPXInfo() {
-        // Update UI Colors
-        btnFPX.setCardBackgroundColor(Color.parseColor("#B2EBF2")); // Light Teal
+        btnFPX.setCardBackgroundColor(Color.parseColor("#B2EBF2"));
         btnCard.setCardBackgroundColor(Color.WHITE);
+        tvPaymentInfo.setText("Pay directly via your bank's secure online portal.");
+    }
 
-        // Update Text Content
-        tvPaymentInfo.setText("1. Secure Bank Transfers\nFPX payments are processed through PayNet (Payments Network Malaysia), Malaysia's official national payments network.\n\n" +
-                "2. Direct Bank Authentication\nAll FPX transactions require users to log in directly to their selected bank's secure online banking system, ensuring full authentication by the bank.\n\n" +
-                "3. No Banking Credentials Stored\nWe do not collect, store, or have access to your bank login details. All authentication is handled entirely by your bank.\n\n" +
-                "4. End-to-End Encryption\nFPX transactions are protected using industry-standard encryption to safeguard your payment information.\n\n" +
-                "5. Real-Time Confirmation\nPayments are validated in real time, reducing errors, failed transactions, and unauthorized transfers.\n\n" +
-                "6. Regulatory Compliance\nFPX operates under Bank Negara Malaysia (BNM) regulations and complies with applicable Malaysian financial security standards.");
+    private void notifyAdminsAndCustomer(AdminOrderModel order, String customerId) {
+        NotificationHelper.sendOrderNotification(customerId, order.orderId, "Pending");
+        DatabaseReference adminsRef = FirebaseDatabase.getInstance().getReference("Admins");
+        adminsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot adminSnap : snapshot.getChildren()) {
+                    NotificationHelper.sendAdminNotification(adminSnap.getKey(), "New Order", "Order #" + order.orderId, "order", order.orderId);
+                }
+            }
+            @Override public void onCancelled(@NonNull DatabaseError error) {}
+        });
     }
 }

@@ -32,9 +32,10 @@
                 android:id="@+id/badge_card"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="#4CAF50"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="0dp">
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp">
+
                 <TextView
                     android:id="@+id/tv_status"
                     android:layout_width="wrap_content"
@@ -42,9 +43,8 @@
                     android:paddingHorizontal="10dp"
                     android:paddingVertical="2dp"
                     android:text="Available"
-                    android:textColor="@color/white"
                     android:textSize="11sp"
-                    android:textStyle="bold" />
+                    android:fontFamily="sans-serif-medium" />
             </com.google.android.material.card.MaterialCardView>
 
             <TextView

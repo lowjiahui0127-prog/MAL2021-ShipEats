@@ -17,13 +17,14 @@
         <ImageView
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/ic_warning_circle" />
+            android:src="@android:drawable/ic_dialog_alert"
+            android:contentDescription="@string/are_you_sure" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="ARE YOU SURE?"
+            android:text="@string/are_you_sure"
             android:textColor="#04397B"
             android:textSize="22sp"
             android:textStyle="bold" />
@@ -33,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:gravity="center"
-            android:text="Do you really want to delete this MENU?\nThis process cannot be undone."
+            android:text="@string/delete_menu_confirmation"
             android:textColor="#04397B"
             android:textSize="14sp" />
 
@@ -49,7 +50,7 @@
                 android:layout_height="50dp"
                 android:layout_weight="1"
                 android:layout_marginEnd="8dp"
-                android:text="CANCEL"
+                android:text="@string/cancel"
                 android:backgroundTint="#AFAFAF"
                 app:cornerRadius="25dp" />
 
@@ -59,7 +60,7 @@
                 android:layout_height="50dp"
                 android:layout_weight="1"
                 android:layout_marginStart="8dp"
-                android:text="DELETE"
+                android:text="@string/delete"
                 android:backgroundTint="#D92D20"
                 app:cornerRadius="25dp" />
         </LinearLayout>

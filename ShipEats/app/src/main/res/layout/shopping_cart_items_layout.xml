@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_marginBottom="10dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         app:cardCornerRadius="12dp"
-        app:cardElevation="2dp"
+        app:cardElevation="4dp"
         android:backgroundTint="@color/white">
 
         <LinearLayout
@@ -74,31 +74,32 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
 
                     <ImageView
                         android:id="@+id/minus_button"
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
-                        android:padding="8dp"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:padding="4dp"
                         android:src="@drawable/minus"
                         app:tint="@color/black" />
 
                     <TextView
                         android:id="@+id/food_counter"
-                        android:layout_width="40dp"
+                        android:layout_width="30dp"
                         android:layout_height="wrap_content"
                         android:text="1"
                         android:textAlignment="center"
-                        android:textSize="20sp"
+                        android:textSize="18sp"
                         android:textStyle="bold"
                         android:textColor="@color/black"/>
 
                     <ImageView
                         android:id="@+id/plus_button"
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
-                        android:padding="8dp"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:padding="4dp"
                         android:src="@drawable/plus"
                         app:tint="@color/black" />
                 </LinearLayout>
@@ -106,7 +107,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
+                    android:layout_marginTop="8dp"
                     android:gravity="bottom"
                     android:orientation="horizontal">
 
@@ -117,7 +118,8 @@
                         android:layout_weight="1"
                         android:text="RM 0.00"
                         android:textSize="17sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:textColor="@color/black" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -129,20 +131,24 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:paddingRight="5dp"
-                            android:text="Quantity: 0"
+                            android:text="Quantity: 10"
                             android:textColor="#C4C4C4"
                             android:textSize="11sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:id="@+id/stock_quantity"/>
 
                         <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_remove"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:backgroundTint="#8DDDFA"
-                            android:paddingVertical="5dp"
-                            android:text="Add to Cart"
-                            android:textColor="@color/black"
+                            android:backgroundTint="#FF5252"
+                            android:paddingVertical="4dp"
+                            android:paddingHorizontal="16dp"
+                            android:text="Remove"
+                            android:textColor="@color/white"
                             app:cornerRadius="12dp"
+                            android:textAllCaps="false"
                             android:textSize="12sp" />
                     </LinearLayout>
                 </LinearLayout>

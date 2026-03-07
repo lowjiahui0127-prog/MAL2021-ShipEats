@@ -1,190 +1,241 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFEF0"
-    android:orientation="vertical"
-    tools:context=".C4_Food_Details">
+    android:background="#F9F9F2">
+
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/bottom_bar"
+        app:layout_constraintTop_toTopOf="parent">
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingVertical="25dp"
-            android:paddingHorizontal="15dp">
+            android:padding="16dp">
+
+            <!-- Food Info Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:backgroundTint="@color/white">
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="0dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
+
                     <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="230dp">
+                        android:layout_height="220dp">
+
                         <ImageView
+                            android:id="@+id/detail_food_image"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:scaleType="centerCrop"
                             android:src="@drawable/no_image_available" />
 
-                        <TextView
+                        <ImageView
                             android:id="@+id/close_food_details"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:layout_gravity="top|start"
-                            android:layout_margin="15dp"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_margin="12dp"
                             android:background="@drawable/circle_white"
-                            android:gravity="center"
-                            android:text="✕"
-                            android:textColor="@color/black"
-                            android:textSize="20sp"
-                            android:textStyle="bold"
-                            android:elevation="4dp"/>
+                            android:padding="8dp"
+                            android:src="@drawable/ic_close"
+                            app:tint="@color/black" />
                     </FrameLayout>
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:paddingHorizontal="20dp"
-                        android:paddingVertical="30dp">
-                        <LinearLayout
+                        android:padding="16dp">
+
+                        <RelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_marginBottom="5dp">
+                            android:layout_height="wrap_content">
+
                             <TextView
+                                android:id="@+id/food_name"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:layout_marginRight="15dp"
-                                android:textStyle="bold"
-                                android:textSize="25sp"
-                                android:text="Food Name"
-                                android:id="@+id/food_name"/>
+                                android:layout_alignParentStart="true"
+                                android:layout_toStartOf="@id/food_price"
+                                android:text="Nasi Goreng"
+                                android:textColor="@color/black"
+                                android:textSize="22sp"
+                                android:textStyle="bold" />
+
                             <TextView
+                                android:id="@+id/food_price"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="right"
-                                android:textStyle="bold"
-                                android:textSize="20sp"
-                                android:text="RM 0.00"
-                                android:id="@+id/food_price"/>
-                        </LinearLayout>
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="10dp"
-                            android:textAlignment="textEnd"
-                            android:textSize="16sp"
-                            android:textColor="#6D6D6D"
-                            android:text="Quantity: 0"
-                            android:id="@+id/food_quantity"/>
+                                android:layout_alignParentEnd="true"
+                                android:text="RM 3.50"
+                                android:textColor="@color/black"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/food_quantity"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@id/food_price"
+                                android:layout_alignParentEnd="true"
+                                android:text="Quantity: 10"
+                                android:textColor="#777777"
+                                android:textSize="12sp" />
+                        </RelativeLayout>
+
+                        <!-- Dietary Tags -->
                         <LinearLayout
+                            android:id="@+id/food_tags_container"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:layout_marginBottom="15dp"
-                            android:id="@+id/food_tags_container">
+                            android:layout_marginTop="8dp"
+                            android:orientation="horizontal">
+                            
+                            <TextView
+                                android:id="@+id/tag_spicy"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/stat_pending_bg"
+                                android:paddingHorizontal="12dp"
+                                android:paddingVertical="4dp"
+                                android:text="Spicy"
+                                android:textColor="@color/white"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                android:visibility="gone"
+                                tools:visibility="visible"
+                                android:layout_marginEnd="8dp"/>
+
+                            <TextView
+                                android:id="@+id/tag_veg"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/stat_accepted_bg"
+                                android:paddingHorizontal="12dp"
+                                android:paddingVertical="4dp"
+                                android:text="Vegetarian"
+                                android:textColor="@color/white"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                android:visibility="gone"
+                                tools:visibility="visible"/>
                         </LinearLayout>
+
                         <TextView
+                            android:id="@+id/food_description"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:paddingHorizontal="10dp"
-                            android:textSize="16sp"
-                            android:text="No description."
-                            android:id="@+id/food_description"/>
+                            android:layout_marginTop="16dp"
+                            android:text="No description available."
+                            android:textColor="#555555"
+                            android:textSize="14sp" />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
+            <!-- Special Instructions -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/white"
-                android:layout_marginBottom="20dp">
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="0dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingHorizontal="20dp"
-                    android:paddingVertical="25dp">
+                    android:padding="16dp">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="10dp"
-                        android:textSize="22sp"
-                        android:textStyle="bold"
-                        android:text="Special Instructions"/>
-                    <com.google.android.material.textfield.TextInputLayout
+                        android:text="Special Instructions"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <EditText
+                        android:id="@+id/special_instructions_input"
                         android:layout_width="match_parent"
-                        android:layout_height="110dp"
-                        app:hintEnabled="false">
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:layout_width="match_parent"
-                            android:layout_height="100dp"
-                            android:gravity="top|start"
-                            android:hint="Let us know if you are allergic to anything or if we need to avoid anything"/>
-                    </com.google.android.material.textfield.TextInputLayout>
+                        android:layout_height="100dp"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/bg_box"
+                        android:gravity="top"
+                        android:hint="Let us know if you are allergic to anything..."
+                        android:padding="12dp"
+                        android:textSize="14sp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
+            <!-- Cutlery -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTint="@color/white">
-                <LinearLayout
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="0dp">
+
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingVertical="25dp"
-                    android:paddingHorizontal="20dp">
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/tvCutlery"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cutlery"
+                        android:textColor="@color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="10dp"
-                        android:textStyle="bold"
-                        android:textSize="22sp"
-                        android:text="Cutlery"/>
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_below="@id/tvCutlery"
+                        android:layout_marginTop="4dp"
+                        android:text="Would you like a set of fork and spoon?"
+                        android:textColor="#777777"
+                        android:textSize="12sp" />
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/want_cutlery"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginLeft="5dp"
-                            android:layout_marginRight="15dp"
-                            android:layout_gravity="center"
-                            android:textSize="16sp"
-                            android:text="Would you like a set of fork and spoon?"/>
-                        <com.google.android.material.switchmaterial.SwitchMaterial
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            app:thumbTint="#04397B"
-                            app:trackTint="#D8D8D8"
-                            android:id="@+id/want_cutlery"/>
-                    </LinearLayout>
-                </LinearLayout>
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true" />
+                </RelativeLayout>
             </com.google.android.material.card.MaterialCardView>
+
         </LinearLayout>
     </ScrollView>
+
+    <!-- Bottom Bar -->
     <LinearLayout
+        android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="80dp"
         android:background="@color/white"
-        android:orientation="horizontal"
+        android:elevation="8dp"
         android:gravity="center_vertical"
-        android:elevation="10dp"
-        android:outlineProvider="background"
-        android:paddingHorizontal="20dp">
+        android:orientation="horizontal"
+        android:paddingHorizontal="24dp"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -194,43 +245,42 @@
 
             <ImageView
                 android:id="@+id/minus_button"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:padding="8dp"
-                android:src="@drawable/minus"
-                app:tint="@color/black" />
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/minus" />
 
             <TextView
                 android:id="@+id/food_counter"
                 android:layout_width="40dp"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:text="1"
-                android:textAlignment="center"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/black"/>
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
             <ImageView
                 android:id="@+id/plus_button"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:padding="8dp"
-                android:src="@drawable/plus"
-                app:tint="@color/black" />
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/plus" />
         </LinearLayout>
 
         <View
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="1" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/add_to_cart_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="54dp"
             android:backgroundTint="#E69303"
-            app:cornerRadius="12dp"
             android:text="Add to Cart"
-            android:id="@+id/add_to_cart_button"/>
-
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:cornerRadius="16dp" />
     </LinearLayout>
-</LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

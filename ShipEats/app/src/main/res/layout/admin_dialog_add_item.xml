@@ -63,7 +63,7 @@
                     android:layout_height="match_parent">
 
                     <ImageView
-                        android:id="@+id/img_food"
+                        android:id="@+id/iv_food_preview"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"
@@ -80,7 +80,7 @@
                             android:layout_width="36dp"
                             android:layout_height="36dp"
                             android:src="@drawable/ic_cloud_upload"
-                            android:tint="@color/white"/>
+                            app:tint="@color/white"/>
 
                         <TextView
                             android:text="Tap to Upload"
@@ -151,19 +151,47 @@
 
             <!-- Quantity -->
             <TextView
-                android:text="Quantity (Max 50)"
+                android:text="Quantity"
                 android:textStyle="bold"
                 android:textColor="#04397B"
                 android:layout_marginTop="16dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
-            <Spinner
-                android:id="@+id/spinner_quantity"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:background="@drawable/bg_input_field"
-                android:layout_marginTop="8dp"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="4dp"
+                android:padding="2dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_minus"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:text="-"
+                    app:cornerRadius="8dp"/>
+
+                <EditText
+                    android:id="@+id/et_quantity"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:text="1"
+                    android:maxLength="4"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_plus"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:text="+"
+                    app:cornerRadius="8dp"/>
+            </LinearLayout>
 
             <!-- Category -->
             <TextView
@@ -180,6 +208,34 @@
                 android:layout_height="48dp"
                 android:background="@drawable/bg_input_field"
                 android:layout_marginTop="8dp"/>
+
+            <!-- Dietary Flags -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="16dp"
+                android:weightSum="2"
+                android:visibility="gone">
+
+                <CheckBox
+                    android:id="@+id/cb_vegetarian"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Vegetarian"
+                    android:textColor="#04397B"
+                    android:textStyle="bold" />
+
+                <CheckBox
+                    android:id="@+id/cb_spicy"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Spicy"
+                    android:textColor="#04397B"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_add_confirm"

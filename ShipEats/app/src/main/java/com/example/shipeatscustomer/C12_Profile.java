@@ -42,11 +42,17 @@ public class C12_Profile extends AppCompatActivity {
         EditText etEmail = findViewById(R.id.etEmail);
         TextView tvProfileName = findViewById(R.id.tvProfileName);
         Button btnSaveProfile = findViewById(R.id.btnSaveProfile);
+        ImageView ivBack = findViewById(R.id.ivBack); // Back button ID from layout
 
-        // --- 2. LOAD SAVED DATA (If any exists) ---
+        // --- 2. BACK BUTTON LOGIC ---
+        if (ivBack != null) {
+            ivBack.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
+        }
+
+        // --- 3. LOAD SAVED DATA (If any exists) ---
         loadExistingData(etPhone, etDOB, genderBox);
 
-        // --- 3. GALLERY PICKER LOGIC ---
+        // --- 4. GALLERY PICKER LOGIC ---
         galleryLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(),
                 uri -> {
                     if (uri != null) {
@@ -58,12 +64,12 @@ public class C12_Profile extends AppCompatActivity {
 
         btnCamera.setOnClickListener(v -> galleryLauncher.launch("image/*"));
 
-        // --- 4. GENDER SELECTION LOGIC ---
+        // --- 5. GENDER SELECTION LOGIC ---
         String[] genderOptions = {"Male", "Female", "Prefer Not to Say"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, genderOptions);
         genderBox.setAdapter(adapter);
 
-        // --- 5. DATE OF BIRTH PICKER LOGIC ---
+        // --- 6. DATE OF BIRTH PICKER LOGIC ---
         etDOB.setOnClickListener(v -> {
             Calendar calendar = Calendar.getInstance();
             DatePickerDialog datePickerDialog = new DatePickerDialog(
@@ -77,7 +83,7 @@ public class C12_Profile extends AppCompatActivity {
             datePickerDialog.show();
         });
 
-        // --- 6. SAVE BUTTON LOGIC ---
+        // --- 7. SAVE BUTTON LOGIC ---
         btnSaveProfile.setOnClickListener(v -> {
             String name = tvProfileName.getText().toString();
             String gender = genderBox.getText().toString();

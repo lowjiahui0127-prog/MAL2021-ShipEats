@@ -111,15 +111,17 @@
                             android:orientation="vertical">
                             <com.google.android.material.textfield.TextInputLayout
                                 android:layout_width="120dp"
-                                android:layout_height="40dp"
+                                android:layout_height="wrap_content"
                                 app:boxCornerRadiusTopStart="20dp"
                                 app:boxCornerRadiusBottomEnd="20dp"
                                 app:boxCornerRadiusBottomStart="20dp"
                                 app:boxCornerRadiusTopEnd="20dp">
                                 <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/pickup_time_input"
                                     android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:inputType="time"/>
+                                    android:layout_height="wrap_content"
+                                    android:inputType="time"
+                                    android:padding="10dp"/>
                             </com.google.android.material.textfield.TextInputLayout>
                             <LinearLayout
                                 android:layout_width="match_parent"

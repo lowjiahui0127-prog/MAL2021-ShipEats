@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.google.android.material.card.MaterialCardView
@@ -43,11 +43,12 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
 
                     <TextView
                         android:id="@+id/item_name"
-                        android:layout_width="0dp"
+                        android:layout_width="205dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Item Name"
@@ -56,12 +57,29 @@
                         android:textStyle="bold" />
 
                     <ImageView
+                        android:id="@+id/ic_spicy"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginEnd="4dp"
+                        android:src="@drawable/spicy_icon"
+                        android:visibility="gone" />
+
+                    <ImageView
+                        android:id="@+id/ic_veg"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginEnd="8dp"
+                        android:src="@drawable/vegetarian_icon"
+                        android:visibility="gone" />
+
+                    <ImageView
                         android:layout_width="14dp"
                         android:layout_height="14dp"
                         android:layout_gravity="center_vertical"
                         android:src="@drawable/rating_star_icon" />
 
                     <TextView
+                        android:id="@+id/item_rating"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
@@ -92,6 +110,7 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/item_quantity"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:paddingRight="5dp"
@@ -101,6 +120,7 @@
                             android:textStyle="bold" />
 
                         <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_add_to_cart"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
